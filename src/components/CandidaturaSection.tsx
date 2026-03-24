@@ -48,8 +48,30 @@ const CandidaturaSection = () => {
     },
   });
 
-  const onSubmit = (_data: FormData) => {
-    setSubmitted(true);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("candidature").insert({
+        nome: data.nome,
+        ruolo: data.ruolo,
+        indirizzo: data.indirizzo,
+        durata: data.durata,
+        tentativi: data.tentativi,
+        documentazione: data.documentazione,
+        email: data.email,
+        note: data.note || null,
+      });
+      if (error) throw error;
+      setSubmitted(true);
+      toast.success("Candidatura inviata con successo!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Errore nell'invio. Riprova più tardi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
