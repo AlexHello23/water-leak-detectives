@@ -1,0 +1,1 @@
+ALTER TABLE public.candidature ENABLE ROW LEVEL SECURITY;

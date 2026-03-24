@@ -3,7 +3,9 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/components/ui/sonner";
 import {
   Form,
   FormControl,
@@ -46,8 +48,30 @@ const CandidaturaSection = () => {
     },
   });
 
-  const onSubmit = (_data: FormData) => {
-    setSubmitted(true);
+  const [loading, setLoading] = useState(false);
+
+  const onSubmit = async (data: FormData) => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.from("candidature").insert({
+        nome: data.nome,
+        ruolo: data.ruolo,
+        indirizzo: data.indirizzo,
+        durata: data.durata,
+        tentativi: data.tentativi,
+        documentazione: data.documentazione,
+        email: data.email,
+        note: data.note || null,
+      });
+      if (error) throw error;
+      setSubmitted(true);
+      toast.success("Candidatura inviata con successo!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Errore nell'invio. Riprova più tardi.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -271,9 +295,11 @@ const CandidaturaSection = () => {
                   <div className="pt-2">
                     <Button
                       type="submit"
+                      disabled={loading}
                       className="w-full sm:w-auto font-body font-medium px-8"
                     >
-                      Invia la candidatura
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {loading ? "Invio in corso…" : "Invia la candidatura"}
                     </Button>
                     <p className="font-body text-xs text-muted-foreground mt-3 leading-relaxed">
                       I dati sono trattati con riservatezza e usati esclusivamente per valutare la candidatura.
