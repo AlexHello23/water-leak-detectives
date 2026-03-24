@@ -295,9 +295,11 @@ const CandidaturaSection = () => {
                   <div className="pt-2">
                     <Button
                       type="submit"
+                      disabled={loading}
                       className="w-full sm:w-auto font-body font-medium px-8"
                     >
-                      Invia la candidatura
+                      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {loading ? "Invio in corso…" : "Invia la candidatura"}
                     </Button>
                     <p className="font-body text-xs text-muted-foreground mt-3 leading-relaxed">
                       I dati sono trattati con riservatezza e usati esclusivamente per valutare la candidatura.
